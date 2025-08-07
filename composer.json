@@ -1,0 +1,19 @@
+{
+    "name": "arthu/microondas-digital",
+    "autoload": {
+        "psr-4": {
+            "Microwave\\": "src/Microwave/"
+        }
+    },
+    "authors": [
+        {
+            "name": "arthurL3mos",
+            "email": "arthurdasilvalemos1@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "4.13",
+        "slim/psr7": "1.6",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

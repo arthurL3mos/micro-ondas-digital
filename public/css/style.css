@@ -1,0 +1,233 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    /* background-color: #EB1946; */
+    background-color: black;
+    /* color: #f5f5f5; */
+}
+
+.microwave-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+}
+
+.display{
+    background-color: #333;
+    color: #0f0;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-family: 'Digital', monospace;
+    font-size: 24px;
+}
+
+#time-display {
+    font-size: 32px;
+    /* font-weight: bold; */
+}
+
+.input-group {
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #EB1946;
+    color: white;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #87001d;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.key {
+    font-size: 18px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.key:active {
+    transform: scale(0.95);
+    background-color: #e0e0e0;
+}
+
+#clear-btn {
+    background-color: #f44336;
+    grid-column: span 3;
+}
+
+#clear-btn:hover {
+    background-color: #d32f2f;
+}
+
+#start-btn {
+    width: 100%;
+    background-color: #4CAF50;
+    margin-top: 10px;
+}
+
+#start-btn:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para controles desabilitados */
+button:disabled, input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Estilo para o display quando o tempo está acabando */
+.display-warning {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Estilo para os inputs */
+#time-input:focus, #power-input:focus {
+    outline: 2px solid #4CAF50;
+    border-color: #4CAF50;
+}
+
+/* Estilo para as teclas */
+.input-focused .key {
+    background-color: #f0f0f0;
+    transform: scale(0.98);
+}
+
+.input-active {
+    box-shadow: 0 0 0 2px #4CAF50;
+    border-color: #4CAF50;
+}
+
+/* Estilo para o botão de início rápido */
+#start-btn.quick-start {
+    background-color: #FF9800;
+    animation: pulse 2s infinite;
+}
+
+#start-btn.quick-start:hover {
+    background-color: #F57C00;
+}
+
+/* Animação de pulsar */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Indicador visual de início rápido */
+.quick-start-indicator {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 0.8em;
+    color: #FF9800;
+}
+/* Estilo para o grupo de botões */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+/* Estilo para o botão de início rápido */
+#quick-start-btn {
+    background-color: #FF9800;
+    flex: 1;
+}
+
+#quick-start-btn:hover {
+    background-color: #F57C00;
+}
+
+/* Estilo para o botão normal */
+#start-btn {
+    background-color: #4CAF50;
+    flex: 1;
+}
+
+#start-btn:hover {
+    background-color: #45a049;
+}
+
+/* Estilo quando desabilitado */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#message-display {
+    color: black;
+    font-size: 1.6em;
+    min-height: 1.5em;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.completed-message {
+    animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#pause-cancel-btn {
+    background-color: #f44336;
+    flex: 1;
+}
+
+#pause-cancel-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Estilo quando em modo de pausa */
+#pause-cancel-btn.paused {
+    background-color: #FFC107;
+}
+
+#pause-cancel-btn.paused:hover {
+    background-color: #FFA000;
+}
+
+/* Estilo quando em modo de cancelamento */
+#pause-cancel-btn.cancel {
+    background-color: #9E9E9E;
+}
+
+#pause-cancel-btn.cancel:hover {
+    background-color: #616161;
+}
