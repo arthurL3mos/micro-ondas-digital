@@ -56,10 +56,20 @@ O sistema vem com dois usuários pré-configurados:
 
 ## 🔄 Rotas da API
 
-| Método | Endpoint   | Descrição                      | Autenticação Requerida |
-|--------|------------|--------------------------------|------------------------|
-| POST   | `/login`   | Autenticação de usuário        | Não                    |
-| POST   | `/start`   | Inicia o micro-ondas           | Sim (JWT)              |
-| POST   | `/pause`   | Pausa o aquecimento            | Sim (JWT)              |
-| POST   | `/resume`  | Retoma o aquecimento           | Sim (JWT)              |
-| GET    | `/status`  | Verifica o status atual        | Sim (JWT)              |
+| Método | Endpoint   | Descrição                      | Autenticação | Body Request Example              |
+|--------|------------|--------------------------------|--------------|-----------------------------------|
+| POST   | `/login`   | Autenticação de usuário        | Não          | `{"username":"admin","password":"senha123"}` |
+| POST   | `/start`   | Inicia o micro-ondas           | Sim          | `{"time": 30, "power": 8}`        |
+| POST   | `/pause`   | Pausa o aquecimento            | Sim          | -                                  |
+| POST   | `/resume`  | Retoma o aquecimento           | Sim          | -                                  |
+| GET    | `/status`  | Verifica o status atual        | Sim          | -                                  |
+
+**Exemplo de Response (200 OK):**
+```json
+{
+  "status": "running",
+  "time": 25,
+  "power": 8,
+  "isPaused": false
+}
+```
