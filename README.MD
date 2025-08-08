@@ -56,13 +56,16 @@ O sistema vem com dois usuários pré-configurados:
 
 ## 🔄 Rotas da API
 
-| Método | Endpoint   | Descrição                      | Autenticação | Body Request Example              |
-|--------|------------|--------------------------------|--------------|-----------------------------------|
-| POST   | `/login`   | Autenticação de usuário        | Não          | `{"username":"admin","password":"senha123"}` |
-| POST   | `/start`   | Inicia o micro-ondas           | Sim          | `{"time": 30, "power": 8}`        |
-| POST   | `/pause`   | Pausa o aquecimento            | Sim          | -                                  |
-| POST   | `/resume`  | Retoma o aquecimento           | Sim          | -                                  |
-| GET    | `/status`  | Verifica o status atual        | Sim          | -                                  |
+| Método | Endpoint         | Descrição                             | Autenticação | Body Request Example              |
+|--------|------------------|--------------------------------       |--------------|-----------------------------------|
+| POST   | `/login`         | Autenticação de usuário               | Não          | `{"username":"admin","password":"senha123"}` |
+| POST   | `/start`         | Inicia o micro-ondas                  | Sim          | `{"time": 30, "power": 8}`        |
+| POST   | `/pause`         | Pausa o aquecimento                   | Sim          | -                                  |
+| POST   | `/resume`        | Retoma o aquecimento                  | Sim          | -                                  |
+| GET    | `/status`        | Verifica o status atual               | Sim          | -                                  |
+| GET    | `/programs`      | Lista todos os programas cadastrados  | Sim          | -                                  |
+| POST   | `/programs/add`  | permite cadastrar novos programas     | Sim          | -                                  |
+| DELETE | `/programs/delete`| permite excluir um programa pelo id  | Sim          | -                                  |
 
 **Exemplo de Response (200 OK):**
 ```json

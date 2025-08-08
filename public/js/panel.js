@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'index.html';
     });
 
-    // Configure o Axios para enviar o token em todas as requisições
+    // Configura o Axios para enviar o token em todas as requisições
     axios.interceptors.request.use(config => {
         const token = localStorage.getItem('jwt_token');
         if (token) {
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (response.data.status === 'success') {
                     showMessage('Programa adicionado com sucesso!');
-                    loadPredefinedPrograms(); // Recarrega a lista de programas
-                    addProgramForm.reset(); // Limpa o formulário
+                    loadPredefinedPrograms();
+                    addProgramForm.reset(); 
                 } else {
                     showMessage(response.data.message || 'Erro ao adicionar programa');
                 }
@@ -113,13 +113,10 @@ document.addEventListener('DOMContentLoaded', function () {
         keys.forEach(key => {
             key.addEventListener('click', handleKeyPress);
         });
-
         // Botão iniciar
         startBtn.addEventListener('click', startHeating);
-
         // Botão início rápido
         quickStartBtn.addEventListener('click', quickStart);
-
         // Botão pausar/cancelar
         pauseCancelBtn.addEventListener('click', togglePause);
     }
@@ -203,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function startStatusUpdates() {
         clearStatusInterval(); // Limpa qualquer intervalo existente
 
-        // Primeira verificação imediata
         checkStatusAndUpdate().then(shouldContinue => {
             if (shouldContinue) {
                 statusInterval = setInterval(async () => {
@@ -217,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await axios.get(`${API_BASE_URL}/status`);
 
-            // Verifique primeiro se está pausado
             if (response.data.isPaused) {
                 clearStatusInterval();
                 isRunning = false;
@@ -226,10 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return false;
             }
 
-            // Depois verifique se ainda tem tempo
             if (response.data.time > 0) {
                 updateDisplay(response.data.time, response.data.power);
-                return true; // Continua verificando
+                return true;
             }
             else {
                 clearStatusInterval();

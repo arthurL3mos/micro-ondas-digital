@@ -73,7 +73,6 @@ $app->post('/login', function (Request $request, Response $response) {
 
 // Rota de logout (pública)
 $app->post('/logout', function (Request $request, Response $response) {
-    // Em JWT, o logout é feito no cliente descartando o token
     $response->getBody()->write(json_encode([
         'status' => 'success',
         'message' => 'Faça logout descartando o token no cliente'
@@ -143,7 +142,6 @@ $app->group('', function (RouteCollectorProxy $group) {
                 ->withHeader('Content-Type', 'application/json')
                 ->withStatus(200);
         } catch (InvalidArgumentException $e) {
-            // Erros de validação (400 Bad Request)
             $response->getBody()->write(json_encode([
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -152,7 +150,6 @@ $app->group('', function (RouteCollectorProxy $group) {
                 ->withHeader('Content-Type', 'application/json')
                 ->withStatus(400);
         } catch (Exception $e) {
-            // Erros internos (500 Internal Server Error)
             error_log('Erro no endpoint /start: ' . $e->getMessage());
 
             $response->getBody()->write(json_encode([
@@ -206,7 +203,6 @@ $app->group('', function (RouteCollectorProxy $group) {
         try {
             $data = $request->getParsedBody();
 
-            // Validar dados obrigatórios
             if (empty($data['name']) || empty($data['food']) || empty($data['time']) || empty($data['power']) || empty($data['instructions'])) {
                 throw new InvalidArgumentException('Todos os campos são obrigatórios');
             }

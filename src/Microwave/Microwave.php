@@ -12,6 +12,12 @@ class Microwave
     private $potenciaAtual = 0;
     private $isPaused = false;
     private $ultimaAtualizacao = 0;
+    private string $programsFile;
+
+    public function __construct()
+    {
+        $this->programsFile = __DIR__ . '/programs.json';
+    }
 
     public function start(int $time, int $power, bool $isPredefined = false): array
     {
@@ -141,7 +147,7 @@ class Microwave
 
     public function addProgram(string $name, string $food, int $time, int $power, string $instructions): array
     {
-        $this->validateTime($time, true); // true para permitir tempos maiores que 120s
+        $this->validateTime($time, true);
         $this->validatePower($power);
 
         $filePath = __DIR__ . '/programs.json';
