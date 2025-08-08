@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '36283dc78528bf22652bfff351d7329596bc1316',
+        'reference' => '43fe8ae7c952c82353b8563a6d4270922fd5eb42',
         'name' => 'arthu/microondas-digital',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '36283dc78528bf22652bfff351d7329596bc1316',
+            'reference' => '43fe8ae7c952c82353b8563a6d4270922fd5eb42',
             'dev_requirement' => false,
         ),
         'fig/http-message-util' => array(

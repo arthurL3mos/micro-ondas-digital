@@ -13,17 +13,23 @@ class MicrowaveTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->microwave = new Microwave();
-        // Limpa a sessão antes de cada teste
+        // Destrói a sessão completamente antes de cada teste
         if (session_status() === PHP_SESSION_ACTIVE) {
+            session_unset();
             session_destroy();
         }
+
+        // Reinicia a sessão
+        session_start();
+        $_SESSION = [];
+
+        $this->microwave = new Microwave();
     }
 
     public function testStartWithValidParameters()
     {
         $result = $this->microwave->start(30, 5);
-        
+
         $this->assertEquals('success', $result['status']);
         $this->assertEquals(30, $result['time']);
         $this->assertEquals(5, $result['power']);
@@ -46,7 +52,7 @@ class MicrowaveTest extends TestCase
     {
         $this->microwave->start(30, 5);
         $result = $this->microwave->pause();
-        
+
         $this->assertEquals('success', $result['status']);
         $this->assertTrue($result['isPaused']);
         $this->assertLessThanOrEqual(30, $result['time']);
@@ -63,7 +69,7 @@ class MicrowaveTest extends TestCase
         $this->microwave->start(30, 5);
         $this->microwave->pause();
         $result = $this->microwave->resume();
-        
+
         $this->assertEquals('success', $result['status']);
         $this->assertFalse($result['isPaused']);
     }
@@ -84,7 +90,7 @@ class MicrowaveTest extends TestCase
     {
         $this->microwave->start(30, 5);
         $result = $this->microwave->getStatus();
-        
+
         $this->assertEquals('active', $result['status']);
         $this->assertEquals(5, $result['power']);
         $this->assertFalse($result['isPaused']);
@@ -95,67 +101,81 @@ class MicrowaveTest extends TestCase
         $this->microwave->start(30, 5);
         $this->microwave->pause();
         $result = $this->microwave->getStatus();
-        
+
         $this->assertTrue($result['isPaused']);
     }
 
     public function testListProgramsWithValidFile()
     {
-        // Cria um arquivo temporário para teste
+        // Cria um arquivo temporário para teste com dados controlados
         $tempFile = tempnam(sys_get_temp_dir(), 'microwave');
         file_put_contents($tempFile, json_encode([
-            ['id' => 1, 'name' => 'Test Program']
+            ['id' => 99, 'name' => 'Test Program'] // Dados específicos para teste
         ]));
-        
+
         // Usando Reflection para substituir o caminho do arquivo
         $reflection = new \ReflectionClass($this->microwave);
         $property = $reflection->getProperty('programsFile');
         $property->setAccessible(true);
+        $originalFile = $property->getValue($this->microwave);
         $property->setValue($this->microwave, $tempFile);
-        
+
         $result = $this->microwave->listPrograms();
-        
+
+        // Restaura o valor original
+        $property->setValue($this->microwave, $originalFile);
+        unlink($tempFile);
+
         $this->assertEquals('success', $result['status']);
         $this->assertCount(1, $result['programs']);
-        
-        unlink($tempFile);
+        $this->assertEquals('Test Program', $result['programs'][0]['name']);
     }
 
     public function testListProgramsWithInvalidFile()
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'microwave');
-        unlink($tempFile);
-        
+        unlink($tempFile); // Garante que o arquivo não existe
+
         $reflection = new \ReflectionClass($this->microwave);
         $property = $reflection->getProperty('programsFile');
         $property->setAccessible(true);
+        $originalFile = $property->getValue($this->microwave);
         $property->setValue($this->microwave, $tempFile);
-        
+
         $result = $this->microwave->listPrograms();
-        
+
+        // Restaura o valor original
+        $property->setValue($this->microwave, $originalFile);
+
         $this->assertEquals('error', $result['status']);
+        $this->assertStringContainsString('não encontrado', $result['message']);
     }
 
     public function testAddProgramWithValidData()
     {
-        // Configura arquivo temporário para o teste
         $tempFile = tempnam(sys_get_temp_dir(), 'microwave');
         file_put_contents($tempFile, json_encode([]));
-        
+
         $reflection = new \ReflectionClass($this->microwave);
         $property = $reflection->getProperty('programsFile');
         $property->setAccessible(true);
+        $originalFile = $property->getValue($this->microwave);
         $property->setValue($this->microwave, $tempFile);
-        
+
         $result = $this->microwave->addProgram('Novo Programa', 'Teste', 60, 8, 'Instruções');
-        
-        $this->assertEquals('success', $result['status']);
-        $this->assertEquals('Novo Programa', $result['program']['name']);
-        
+
+        // Verifica se o arquivo foi modificado
+        $this->assertFileExists($tempFile);
         $content = json_decode(file_get_contents($tempFile), true);
-        $this->assertCount(1, $content);
-        
+
+        // Limpeza
+        $property->setValue($this->microwave, $originalFile);
         unlink($tempFile);
+
+        $this->assertEquals('success', $result['status']);
+        $this->assertIsArray($content);
+        $this->assertCount(1, $content);
+        $this->assertEquals('Novo Programa', $content[0]['name']);
     }
 
     public function testAddProgramWithInvalidTime()
@@ -166,27 +186,35 @@ class MicrowaveTest extends TestCase
 
     public function testRemoveProgram()
     {
-        // Configura arquivo temporário com dados iniciais do programa
         $tempFile = tempnam(sys_get_temp_dir(), 'microwave');
         file_put_contents($tempFile, json_encode([
             ['id' => 1, 'name' => 'Programa 1'],
-            ['id' => 6, 'name' => 'Programa 6']
+            ['id' => 6, 'name' => 'Programa 6'],
+            ['id' => 7, 'name' => 'Programa 7']
         ]));
-        
+
         $reflection = new \ReflectionClass($this->microwave);
         $property = $reflection->getProperty('programsFile');
         $property->setAccessible(true);
+        $originalFile = $property->getValue($this->microwave);
         $property->setValue($this->microwave, $tempFile);
-        
+
         $result = $this->microwave->removeProgram(6);
-        
-        $this->assertEquals('success', $result['status']);
-        
+
         $content = json_decode(file_get_contents($tempFile), true);
-        $this->assertCount(1, $content);
-        $this->assertEquals(1, $content[0]['id']);
-        
-        unlink($tempFile); // Limpeza
+
+        // Limpeza
+        $property->setValue($this->microwave, $originalFile);
+        unlink($tempFile);
+
+        $this->assertEquals('success', $result['status']);
+        $this->assertCount(2, $content);
+
+        // Verifica quais programas permaneceram
+        $remainingIds = array_column($content, 'id');
+        $this->assertContains(1, $remainingIds);
+        $this->assertContains(7, $remainingIds);
+        $this->assertNotContains(6, $remainingIds);
     }
 
     public function testCannotRemoveDefaultProgram()

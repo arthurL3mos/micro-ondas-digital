@@ -123,20 +123,14 @@ class Microwave
 
     public function listPrograms(): array
     {
-        $filePath = __DIR__ . '/programs.json';
-
-        if (!file_exists($filePath)) {
+        if (!file_exists($this->programsFile)) {
             return ['status' => 'error', 'message' => 'Arquivo de programas não encontrado'];
         }
 
-        $programs = json_decode(file_get_contents($filePath), true);
+        $programs = json_decode(file_get_contents($this->programsFile), true);
 
         if ($programs === null) {
             return ['status' => 'error', 'message' => 'Erro ao ler programas'];
-        }
-
-        foreach ($programs as &$program) {
-            $program['isDefault'] = ($program['id'] <= 5);
         }
 
         return [
@@ -145,30 +139,25 @@ class Microwave
         ];
     }
 
+
+    // No arquivo src/Microwave/Microwave.php
+
     public function addProgram(string $name, string $food, int $time, int $power, string $instructions): array
     {
         $this->validateTime($time, true);
         $this->validatePower($power);
 
-        $filePath = __DIR__ . '/programs.json';
+        if (!file_exists(dirname($this->programsFile))) {
+            mkdir(dirname($this->programsFile), 0777, true);
+        }
 
-        // Carrega os programas existentes
         $programs = [];
-        if (file_exists($filePath)) {
-            $programs = json_decode(file_get_contents($filePath), true);
-            if ($programs === null) {
-                $programs = [];
-            }
+        if (file_exists($this->programsFile)) {
+            $programs = json_decode(file_get_contents($this->programsFile), true) ?: [];
         }
 
-        // Gera um novo ID
-        $newId = 1;
-        if (!empty($programs)) {
-            $maxId = max(array_column($programs, 'id'));
-            $newId = $maxId + 1;
-        }
+        $newId = empty($programs) ? 1 : max(array_column($programs, 'id')) + 1;
 
-        // Cria o novo programa
         $newProgram = [
             'id' => $newId,
             'name' => $name,
@@ -179,58 +168,54 @@ class Microwave
             'instructions' => $instructions
         ];
 
-        // Adiciona ao array
         $programs[] = $newProgram;
 
-        // Salva no arquivo
-        if (file_put_contents($filePath, json_encode($programs, JSON_PRETTY_PRINT))) {
+        if (file_put_contents($this->programsFile, json_encode($programs, JSON_PRETTY_PRINT))) {
             return [
                 'status' => 'success',
                 'program' => $newProgram,
                 'message' => 'Programa adicionado com sucesso'
             ];
-        } else {
-            throw new RuntimeException('Falha ao salvar o arquivo de programas');
         }
+
+        throw new RuntimeException('Falha ao salvar o arquivo de programas');
     }
 
     public function removeProgram(int $id): array
     {
-        // Não permite remover os programas padrão (IDs 1-5)
         if ($id <= 5) {
             throw new InvalidArgumentException('Não é permitido remover programas padrão');
         }
 
-        $filePath = __DIR__ . '/programs.json';
-
-        // Carrega os programas existentes
-        $programs = [];
-        if (file_exists($filePath)) {
-            $programs = json_decode(file_get_contents($filePath), true);
-            if ($programs === null) {
-                $programs = [];
-            }
+        if (!file_exists($this->programsFile)) {
+            throw new RuntimeException('Arquivo de programas não encontrado');
         }
 
-        // Filtra o programa a ser removido
-        $filteredPrograms = array_filter($programs, function ($program) use ($id) {
+        $programs = json_decode(file_get_contents($this->programsFile), true);
+        if ($programs === null) {
+            throw new RuntimeException('Erro ao ler programas');
+        }
+
+        $initialCount = count($programs);
+        $programs = array_filter($programs, function ($program) use ($id) {
             return $program['id'] !== $id;
         });
 
-        // Verifica se algum programa foi removido
-        if (count($filteredPrograms) === count($programs)) {
+        if (count($programs) === $initialCount) {
             throw new InvalidArgumentException('Programa não encontrado');
         }
 
-        // Salva no arquivo
-        if (file_put_contents($filePath, json_encode(array_values($filteredPrograms), JSON_PRETTY_PRINT))) {
+        // Reindexa o array para manter a ordem sequencial
+        $programs = array_values($programs);
+
+        if (file_put_contents($this->programsFile, json_encode($programs, JSON_PRETTY_PRINT))) {
             return [
                 'status' => 'success',
                 'message' => 'Programa removido com sucesso'
             ];
-        } else {
-            throw new RuntimeException('Falha ao salvar o arquivo de programas');
         }
+
+        throw new RuntimeException('Falha ao salvar o arquivo de programas');
     }
 
     private function generateHeatingChar(): string
