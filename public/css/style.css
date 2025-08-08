@@ -3,11 +3,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     margin: 0;
-    /* background-color: #EB1946; */
     background-color: black;
-    /* color: #f5f5f5; */
 }
 
 .microwave-container {
@@ -15,12 +12,12 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 1);
     padding: 20px;
-    width: auto; /* Alterado para se ajustar ao conteúdo */
-    max-width: 900px; /* Largura máxima */
+    width: 90%;
+    max-width: 1200px;
     text-align: left;
 }
 
-.display{
+.display {
     background-color: #333;
     color: #0f0;
     padding: 15px;
@@ -28,11 +25,11 @@ body {
     margin-bottom: 20px;
     font-family: 'Digital', monospace;
     font-size: 24px;
+    text-align: center;
 }
 
 #time-display {
     font-size: 32px;
-    /* font-weight: bold; */
 }
 
 .input-group {
@@ -99,7 +96,8 @@ button:hover {
 }
 
 /* Estilo para controles desabilitados */
-button:disabled, input:disabled {
+button:disabled,
+input:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
@@ -110,13 +108,22 @@ button:disabled, input:disabled {
 }
 
 @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Estilo para os inputs */
-#time-input:focus, #power-input:focus {
+#time-input:focus,
+#power-input:focus {
     outline: 2px solid #4CAF50;
     border-color: #4CAF50;
 }
@@ -144,9 +151,17 @@ button:disabled, input:disabled {
 
 /* Animação de pulsar */
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Indicador visual de início rápido */
@@ -156,6 +171,7 @@ button:disabled, input:disabled {
     font-size: 0.8em;
     color: #FF9800;
 }
+
 /* Estilo para o grupo de botões */
 .button-group {
     display: flex;
@@ -203,8 +219,13 @@ button:disabled {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 #pause-cancel-btn {
@@ -258,7 +279,7 @@ button:disabled {
     background: white;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .program-card h3 {
@@ -312,11 +333,39 @@ button:disabled {
 .programs-grid {
     flex-grow: 2;
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 300px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 5px;
     margin-top: 10px;
+    font-size: 14px;
+}
+
+.add-program-form {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    /* Scroll interno se necessário */
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.input-group {
+    padding: 10px;
+}
+
+.input-group textarea {
+    width: 100%;
+    box-sizing: border-box; 
+    min-height: 50px;
+    padding: 10px; 
+    border-radius: 4px;
+    resize: vertical; 
+    font-family: inherit; 
     font-size: 14px;
 }
 
@@ -325,7 +374,7 @@ button:disabled {
     .main-content {
         flex-direction: column;
     }
-    
+
     .controls-column,
     .programs-column {
         max-width: 100%;

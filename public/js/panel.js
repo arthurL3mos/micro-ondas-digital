@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // No início do arquivo, verifique a autenticação
     if (!localStorage.getItem('jwt_token')) {
         window.location.href = 'index.html';
     }
