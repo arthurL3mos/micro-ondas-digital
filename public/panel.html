@@ -59,14 +59,36 @@
                     </div>
                 </div>
             </div>
-
             <div class="programs-column">
                 <div class="predefined-programs">
                     <h2>Programas Pré-definidos</h2>
                     <div class="programs-grid" id="programs-container">
                     </div>
-                    <div>
-                        <h1>ADICIONAR</h1>
+                    <div class="add-program-form">
+                        <h2>Adicionar Novo Programa</h2>
+                        <form id="add-program-form">
+                            <div class="input-group">
+                                <label for="program-name">Nome do Programa:</label>
+                                <input type="text" id="program-name" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="program-food">Alimento:</label>
+                                <input type="text" id="program-food" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="program-time">Tempo (segundos):</label>
+                                <input type="number" id="program-time" min="1" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="program-power">Potência (1-10):</label>
+                                <input type="number" id="program-power" min="1" max="10" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="program-instructions">Instruções:</label>
+                                <textarea id="program-instructions" required></textarea>
+                            </div>
+                            <button type="submit" class="add-program-btn">Adicionar Programa</button>
+                        </form>
                     </div>
                 </div>
             </div>

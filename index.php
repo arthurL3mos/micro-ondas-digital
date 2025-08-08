@@ -202,6 +202,79 @@ $app->group('', function (RouteCollectorProxy $group) {
             ->withStatus(200);
     });
 
+    $group->post('/programs/add', function (Request $request, Response $response) {
+        try {
+            $data = $request->getParsedBody();
+
+            // Validar dados obrigatórios
+            if (empty($data['name']) || empty($data['food']) || empty($data['time']) || empty($data['power']) || empty($data['instructions'])) {
+                throw new InvalidArgumentException('Todos os campos são obrigatórios');
+            }
+
+            $microwave = new Microwave();
+            $result = $microwave->addProgram(
+                $data['name'],
+                $data['food'],
+                (int)$data['time'],
+                (int)$data['power'],
+                $data['instructions']
+            );
+
+            $response->getBody()->write(json_encode($result));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(200);
+        } catch (InvalidArgumentException $e) {
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
+        } catch (Exception $e) {
+            error_log('Erro ao adicionar programa: ' . $e->getMessage());
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => 'Erro interno ao adicionar programa'
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(500);
+        }
+    });
+
+    $group->delete('/programs/{id}', function (Request $request, Response $response, array $args) {
+        try {
+            $id = (int)$args['id'];
+            
+            $microwave = new Microwave();
+            $result = $microwave->removeProgram($id);
+    
+            $response->getBody()->write(json_encode($result));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(200);
+        } catch (InvalidArgumentException $e) {
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400);
+        } catch (Exception $e) {
+            error_log('Erro ao remover programa: ' . $e->getMessage());
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => 'Erro interno ao remover programa'
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(500);
+        }
+    });
+
 })->add($authMiddleware);
 
 // Executa a aplicação

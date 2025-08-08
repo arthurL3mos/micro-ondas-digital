@@ -129,10 +129,108 @@ class Microwave
             return ['status' => 'error', 'message' => 'Erro ao ler programas'];
         }
 
+        foreach ($programs as &$program) {
+            $program['isDefault'] = ($program['id'] <= 5);
+        }
+
         return [
             'status' => 'success',
             'programs' => $programs
         ];
+    }
+
+    public function addProgram(string $name, string $food, int $time, int $power, string $instructions): array
+    {
+        $this->validateTime($time, true); // true para permitir tempos maiores que 120s
+        $this->validatePower($power);
+
+        $filePath = __DIR__ . '/programs.json';
+
+        // Carrega os programas existentes
+        $programs = [];
+        if (file_exists($filePath)) {
+            $programs = json_decode(file_get_contents($filePath), true);
+            if ($programs === null) {
+                $programs = [];
+            }
+        }
+
+        // Gera um novo ID
+        $newId = 1;
+        if (!empty($programs)) {
+            $maxId = max(array_column($programs, 'id'));
+            $newId = $maxId + 1;
+        }
+
+        // Cria o novo programa
+        $newProgram = [
+            'id' => $newId,
+            'name' => $name,
+            'food' => $food,
+            'time' => $time,
+            'power' => $power,
+            'heatingChar' => $this->generateHeatingChar(),
+            'instructions' => $instructions
+        ];
+
+        // Adiciona ao array
+        $programs[] = $newProgram;
+
+        // Salva no arquivo
+        if (file_put_contents($filePath, json_encode($programs, JSON_PRETTY_PRINT))) {
+            return [
+                'status' => 'success',
+                'program' => $newProgram,
+                'message' => 'Programa adicionado com sucesso'
+            ];
+        } else {
+            throw new RuntimeException('Falha ao salvar o arquivo de programas');
+        }
+    }
+
+    public function removeProgram(int $id): array
+    {
+        // Não permite remover os programas padrão (IDs 1-5)
+        if ($id <= 5) {
+            throw new InvalidArgumentException('Não é permitido remover programas padrão');
+        }
+
+        $filePath = __DIR__ . '/programs.json';
+
+        // Carrega os programas existentes
+        $programs = [];
+        if (file_exists($filePath)) {
+            $programs = json_decode(file_get_contents($filePath), true);
+            if ($programs === null) {
+                $programs = [];
+            }
+        }
+
+        // Filtra o programa a ser removido
+        $filteredPrograms = array_filter($programs, function ($program) use ($id) {
+            return $program['id'] !== $id;
+        });
+
+        // Verifica se algum programa foi removido
+        if (count($filteredPrograms) === count($programs)) {
+            throw new InvalidArgumentException('Programa não encontrado');
+        }
+
+        // Salva no arquivo
+        if (file_put_contents($filePath, json_encode(array_values($filteredPrograms), JSON_PRETTY_PRINT))) {
+            return [
+                'status' => 'success',
+                'message' => 'Programa removido com sucesso'
+            ];
+        } else {
+            throw new RuntimeException('Falha ao salvar o arquivo de programas');
+        }
+    }
+
+    private function generateHeatingChar(): string
+    {
+        $chars = ['*', '#', '@', '&', '%', '$', '!', '?', '~', '^'];
+        return $chars[array_rand($chars)];
     }
 
     private function updateRemainingTime(): void

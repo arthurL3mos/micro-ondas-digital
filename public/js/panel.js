@@ -45,8 +45,42 @@ document.addEventListener('DOMContentLoaded', function () {
     const programsContainer = document.getElementById('programs-container');
     let isPredefined = false;
 
+    const addProgramForm = document.getElementById('add-program-form');
+    if (addProgramForm) {
+        addProgramForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('program-name').value;
+            const food = document.getElementById('program-food').value;
+            const time = parseInt(document.getElementById('program-time').value);
+            const power = parseInt(document.getElementById('program-power').value);
+            const instructions = document.getElementById('program-instructions').value;
+
+            try {
+                const response = await axios.post(`${API_BASE_URL}/programs/add`, {
+                    name,
+                    food,
+                    time,
+                    power,
+                    instructions
+                });
+
+                if (response.data.status === 'success') {
+                    showMessage('Programa adicionado com sucesso!');
+                    loadPredefinedPrograms(); // Recarrega a lista de programas
+                    addProgramForm.reset(); // Limpa o formulário
+                } else {
+                    showMessage(response.data.message || 'Erro ao adicionar programa');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showMessage(error.response?.data?.message || 'Falha ao adicionar programa');
+            }
+        });
+    }
+
     const API_BASE_URL = 'http://localhost:8000';
-   
+
     let statusInterval;
     let countdownInterval;
     let isRunning = false;
@@ -242,11 +276,11 @@ document.addEventListener('DOMContentLoaded', function () {
         programsContainer.innerHTML = '<p>Carregando programas...</p>';
     
         try {
-            const response = await axios.get(`${API_BASE_URL}/programs`); // <-- endpoint do seu backend
-            const programs = response.data.programs; // Ajuste conforme a estrutura de retorno
+            const response = await axios.get(`${API_BASE_URL}/programs`);
+            const programs = response.data.programs;
     
             programsContainer.innerHTML = '';
-            console.log(programs);
+            
             programs.forEach(program => {
                 const programElement = document.createElement('div');
                 programElement.className = 'program-card';
@@ -256,6 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Tempo:</strong> ${formatTime(program.time)}</p>
                     <p><strong>Potência:</strong> ${program.power}</p>
                     <button class="select-program" data-id="${program.id}">Selecionar</button>
+                    ${!program.isDefault ? `<button class="remove-program" data-id="${program.id}">Remover</button>` : ''}
                     <div class="program-instructions">${program.instructions}</div>
                 `;
                 programsContainer.appendChild(programElement);
@@ -263,9 +298,28 @@ document.addEventListener('DOMContentLoaded', function () {
     
             // Adiciona listeners aos botões
             document.querySelectorAll('.select-program').forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     const programId = parseInt(this.getAttribute('data-id'));
                     selectProgramFromBackend(programId, programs);
+                });
+            });
+    
+            // Adiciona listeners aos botões de remoção
+            document.querySelectorAll('.remove-program').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const programId = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Tem certeza que deseja remover este programa?')) {
+                        try {
+                            const response = await axios.delete(`${API_BASE_URL}/programs/${programId}`);
+                            if (response.data.status === 'success') {
+                                showMessage('Programa removido com sucesso!');
+                                loadPredefinedPrograms(); // Recarrega a lista
+                            }
+                        } catch (error) {
+                            console.error('Erro ao remover programa:', error);
+                            showMessage(error.response?.data?.message || 'Falha ao remover programa');
+                        }
+                    }
                 });
             });
     
@@ -274,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
             programsContainer.innerHTML = '<p>Erro ao carregar programas.</p>';
         }
     }
-    
+
     function selectProgramFromBackend(programId, programsList) {
         const program = programsList.find(p => p.id === programId);
         console.log('clicou aqui');
@@ -283,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timeInput.disabled = true;
         powerInput.disabled = true;
         isPredefined = true;
-    
+
         updateDisplay(program.time, program.power);
         showMessage(`${program.name}`);
     }
