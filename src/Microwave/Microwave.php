@@ -13,9 +13,9 @@ class Microwave
     private $isPaused = false;
     private $ultimaAtualizacao = 0;
 
-    public function start(int $time, int $power): array
+    public function start(int $time, int $power, bool $isPredefined = false): array
     {
-        $this->validateTime($time);
+        $this->validateTime($time, $isPredefined);
         $this->validatePower($power);
 
         $this->aquecimentoAtivo = true;
@@ -115,6 +115,26 @@ class Microwave
         ];
     }
 
+    public function listPrograms(): array
+    {
+        $filePath = __DIR__ . '/programs.json';
+
+        if (!file_exists($filePath)) {
+            return ['status' => 'error', 'message' => 'Arquivo de programas não encontrado'];
+        }
+
+        $programs = json_decode(file_get_contents($filePath), true);
+
+        if ($programs === null) {
+            return ['status' => 'error', 'message' => 'Erro ao ler programas'];
+        }
+
+        return [
+            'status' => 'success',
+            'programs' => $programs
+        ];
+    }
+
     private function updateRemainingTime(): void
     {
         if (!$this->isPaused && $this->aquecimentoAtivo) {
@@ -148,16 +168,15 @@ class Microwave
         }
     }
 
-    private function validateTime(int $time): void
+    private function validateTime(int $time, bool $isPredefined = false): void
     {
         if ($time <= 0) {
             throw new InvalidArgumentException('Tempo deve ser maior que zero');
         }
-        if ($time > 120) {
+        if (!$isPredefined && $time > 120) {
             throw new InvalidArgumentException('Tempo deve ser menor que 120');
         }
     }
-
     private function validatePower(int $power): void
     {
         if ($power < 1 || $power > 10) {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,49 +9,69 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/panel.js"></script>
+    <script src="js/programs.js"></script>
 </head>
+
 <body>
     <div class="microwave-container">
         <h1>Micro-ondas Digital</h1>
-        <div class="display">
-            <div id="time-display">00:00</div>
-            <div id="power-display">Potência: 10</div>
-        </div>
-    
-        <div class="controls">
-            <div class="input-group">
-                <label for="time-input">Tempo (segundos):</label>
-                <input type="number" id="time-input" min="1" max="600">
-            </div>
-            
-            <div class="input-group">
-                <label for="power-input">Potência (1-10):</label>
-                <input type="number" id="power-input" min="1" max="10" value="10">
-                <div id="message-display"></div>
-            </div>
-            
-            <div class="buttongroup">
-                <button id="quick-start-btn" class="quick-start">Início Rápido (30s/Pot.10)</button>
+
+        <div class="main-content">
+            <!-- Coluna dos controles -->
+            <div class="controls-column">
+                <div class="display">
+                    <div id="time-display">00:00</div>
+                    <div id="power-display">Potência: 10</div>
+                </div>
+
+                <div class="controls">
+                    <div class="input-group">
+                        <label for="time-input">Tempo (segundos):</label>
+                        <input type="number" id="time-input" min="1" max="600">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="power-input">Potência (1-10):</label>
+                        <input type="number" id="power-input" min="1" max="10" value="10">
+                        <div id="message-display"></div>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="start-btn">Iniciar</button>
+                        <button id="pause-cancel-btn">Pausar</button>
+                    </div>
+
+                    <div class="buttongroup">
+                        <button id="quick-start-btn" class="quick-start">Início Rápido (30s/Pot.10)</button>
+                    </div>
+
+                    <div class="keypad">
+                        <button class="key">1</button>
+                        <button class="key">2</button>
+                        <button class="key">3</button>
+                        <button class="key">4</button>
+                        <button class="key">5</button>
+                        <button class="key">6</button>
+                        <button class="key">7</button>
+                        <button class="key">8</button>
+                        <button class="key">9</button>
+                        <button class="key">0</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="button-group">
-                <button id="start-btn">Iniciar</button>
-                <button id="pause-cancel-btn">Pausar</button>
+            <div class="programs-column">
+                <div class="predefined-programs">
+                    <h2>Programas Pré-definidos</h2>
+                    <div class="programs-grid" id="programs-container">
+                    </div>
+                    <div>
+                        <h1>ADICIONAR</h1>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="keypad">
-            <button class="key">1</button>
-            <button class="key">2</button>
-            <button class="key">3</button>
-            <button class="key">4</button>
-            <button class="key">5</button>
-            <button class="key">6</button>
-            <button class="key">7</button>
-            <button class="key">8</button>
-            <button class="key">9</button>
-            <button class="key">0</button>
         </div>
     </div>
 </body>
+
 </html>

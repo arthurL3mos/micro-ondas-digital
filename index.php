@@ -133,9 +133,10 @@ $app->group('', function (RouteCollectorProxy $group) {
             $data = $request->getParsedBody();
             $time = $data['time'] ?? 0;
             $power = $data['power'] ?? 0;
+            $isPredefined = $data['isPredefined'] ?? false;
 
             $microwave = new Microwave();
-            $result = $microwave->start((int)$time, (int)$power);
+            $result = $microwave->start((int)$time, (int)$power, $isPredefined);
 
             $response->getBody()->write(json_encode($result));
             return $response
@@ -190,6 +191,17 @@ $app->group('', function (RouteCollectorProxy $group) {
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     });
+
+    $group->get('/programs', function (Request $request, Response $response) {
+        $microwave = new Microwave();
+        $result = $microwave->listPrograms();
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    });
+
 })->add($authMiddleware);
 
 // Executa a aplicação

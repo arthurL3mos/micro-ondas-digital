@@ -42,8 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const pauseCancelBtn = document.getElementById('pause-cancel-btn');
     const keys = document.querySelectorAll('.key');
     const messageDisplay = document.getElementById('message-display');
+    const programsContainer = document.getElementById('programs-container');
+    let isPredefined = false;
 
     const API_BASE_URL = 'http://localhost:8000';
+   
     let statusInterval;
     let countdownInterval;
     let isRunning = false;
@@ -53,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function init() {
         setupEventListeners();
         checkInitialStatus();
+        loadPredefinedPrograms();
     }
 
     function handleKeyPress() {
@@ -107,7 +111,8 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await axios.post(`${API_BASE_URL}/start`, {
                 time: time,
-                power: power
+                power: power,
+                isPredefined: isPredefined
             });
 
             if (response.data.status === 'success') {
@@ -153,12 +158,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetDisplay() {
-        console.log('chamou a reset display');
         timeDisplay.textContent = '00:00';
         powerDisplay.textContent = 'Potência: 10';
         timeInput.value = '';
         powerInput.value = '10';
-        pauseCancelBtn.textContent = 'Cancelar'; // Mantém o texto como Cancelar
+        timeInput.disabled = false;
+        powerInput.disabled = false;
+        pauseCancelBtn.textContent = 'Cancelar';
     }
 
     function startStatusUpdates() {
@@ -231,4 +237,61 @@ document.addEventListener('DOMContentLoaded', function () {
         messageDisplay.textContent = message;
         setTimeout(() => messageDisplay.textContent = '', 5000);
     }
+
+    async function loadPredefinedPrograms() {
+        programsContainer.innerHTML = '<p>Carregando programas...</p>';
+    
+        try {
+            const response = await axios.get(`${API_BASE_URL}/programs`); // <-- endpoint do seu backend
+            const programs = response.data.programs; // Ajuste conforme a estrutura de retorno
+    
+            programsContainer.innerHTML = '';
+            console.log(programs);
+            programs.forEach(program => {
+                const programElement = document.createElement('div');
+                programElement.className = 'program-card';
+                programElement.innerHTML = `
+                    <h3>${program.name}</h3>
+                    <p><strong>Alimento:</strong> ${program.food}</p>
+                    <p><strong>Tempo:</strong> ${formatTime(program.time)}</p>
+                    <p><strong>Potência:</strong> ${program.power}</p>
+                    <button class="select-program" data-id="${program.id}">Selecionar</button>
+                    <div class="program-instructions">${program.instructions}</div>
+                `;
+                programsContainer.appendChild(programElement);
+            });
+    
+            // Adiciona listeners aos botões
+            document.querySelectorAll('.select-program').forEach(button => {
+                button.addEventListener('click', function () {
+                    const programId = parseInt(this.getAttribute('data-id'));
+                    selectProgramFromBackend(programId, programs);
+                });
+            });
+    
+        } catch (error) {
+            console.error('Erro ao buscar programas:', error);
+            programsContainer.innerHTML = '<p>Erro ao carregar programas.</p>';
+        }
+    }
+    
+    function selectProgramFromBackend(programId, programsList) {
+        const program = programsList.find(p => p.id === programId);
+        console.log('clicou aqui');
+        timeInput.value = program.time;
+        powerInput.value = program.power;
+        timeInput.disabled = true;
+        powerInput.disabled = true;
+        isPredefined = true;
+    
+        updateDisplay(program.time, program.power);
+        showMessage(`${program.name}`);
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
 });
