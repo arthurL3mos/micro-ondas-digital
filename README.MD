@@ -28,7 +28,7 @@ Projeto de simulação de um micro-ondas digital utilizando PHP com Slim Framewo
     - Abra o arquivo fronted/index.html diretamente no navegador
     - Ou inicie um servidor para o frontend:
     ```bash
-    php -S localhost:8080 -t frontend
+    php -S localhost:8080 -t public
 
     - E acesse http://localhost:8080
 
