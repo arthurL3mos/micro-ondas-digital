@@ -30,7 +30,7 @@ Projeto de simulação de um micro-ondas digital utilizando PHP com Slim Framewo
     ```bash
     php -S localhost:8000
 
-    - E acesse http://localhost:8000/public/panel.html
+    - E acesse http://localhost:8000/public
 
 ## Configuração de Ambiente
 1. Copie o arquivo `.env.example` para `.env`
