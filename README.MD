@@ -76,3 +76,24 @@ O sistema vem com dois usuários pré-configurados:
   "isPaused": false
 }
 ```
+
+🧩 Estrutura do Projeto
+```text
+microondas-digital/
+├── public/              # Frontend e entrada pública
+│   ├── css/
+│   ├── js/
+│   ├── index.html
+│   └── panel.html
+├── src/                 # Código fonte PHP
+│   ├── Microwave/
+│   ├── Auth/
+│   └── ...
+├── tests/               # Testes automatizados
+│   ├── MicrowaveTest.php
+│   └── ApiTest.php
+├── vendor/              # Dependências do Composer
+├── .env.example         # Modelo de variáveis de ambiente
+├── composer.json        # Configuração do PHP
+└── README.md            # Este arquivo
+```
