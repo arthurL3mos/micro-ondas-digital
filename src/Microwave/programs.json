@@ -43,14 +43,5 @@
         "power": 9,
         "heatingChar": "%",
         "instructions": " Deixe o recipiente destampado e em casos de pl\u00e1stico, cuidado ao retirar o recipiente pois o mesmo pode perder resist\u00eancia em altas temperaturas."
-    },
-    {
-        "id": 6,
-        "name": "BOLO",
-        "food": "BOLO",
-        "time": 100,
-        "power": 9,
-        "heatingChar": "%",
-        "instructions": "TESTE PARA PREPARAR BOLO, PROGRAMA DO BOLO"
     }
 ]
